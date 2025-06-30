@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Data Management{% endblock %}
+
+{% block content %}
+    <h2>Data Management</h2>
+
+    {% if current_user.is_authenticated %}
+        <p>Hello, {{ current_user.username }}!
+        (Privilege:
+        {% if current_user.privilege_level == 3 %}Admin
+        {% elif current_user.privilege_level == 2 %}Editor
+        {% else %}User
+        {% endif %})
+        </p>
+
+        <h3>Your Data / All Data</h3>
+        {% if data %}
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>Owner ID</th>
+                    <th>Actions</th>
+                </tr>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.value }}</td>
+                    <td>{{ item.user_id }}</td>
+                    <td>
+                        {% if current_user.privilege_level > 1 or item.user_id == current_user.id %}
+                            <a href="{{ url_for('main.edit_data', id=item.id) }}">Edit</a>
+                            <form method="POST" action="{{ url_for('main.delete_data', id=item.id) }}" style="display:inline;">
+                                <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this item?');">
+                            </form>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No data found. <a href="{{ url_for('main.add_data') }}">Add some now!</a></p>
+        {% endif %}
+
+        {# This part will be moved to a dedicated admin page later #}
+        {# {% if current_user.privilege_level == 3 and users %} ... {% endif %} #}
+
+    {% else %}
+        <p>Please log in to manage data.</p>
+    {% endif %}
+{% endblock %}

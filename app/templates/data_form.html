@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Data{% endblock %}
+
+{% block content %}
+    <h2>{{ action }} Data</h2>
+    <form method="POST">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value="{{ data_item.name if data_item else '' }}" required><br>
+
+        <label for="value">Value:</label><br>
+        <textarea id="value" name="value">{{ data_item.value if data_item else '' }}</textarea><br><br>
+
+        <input type="submit" value="{{ action }}">
+    </form>
+    <p><a href="{{ url_for('main.index') }}">Back to Data List</a></p>
+{% endblock %}
